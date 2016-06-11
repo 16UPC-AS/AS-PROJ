@@ -22,7 +22,7 @@ public class Ordinador extends Recurs {
 	private String model;
 
 	// bi-directional one-to-one association to Sala
-	@OneToOne(mappedBy = "ordinadorBean")
+	@OneToOne(mappedBy = "ordinador")
 	private Sala sala;
 
 	public Ordinador(){

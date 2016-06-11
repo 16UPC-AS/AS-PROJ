@@ -95,8 +95,7 @@ public class CUCreaReservaAmbNotificacio {
 			if (rec.etsSala()) {
 				List<ReservaAmbNotificacio> lResv = FactoriaDades.getCtrlReserva().getByUsuari(u);
 				for (ReservaAmbNotificacio r : lResv) {
-					if (!r.periodeNoSolapat(data, horaInici, horaFi) && r.recursEtsSala()
-							&& !nomR.equals(r.getNomRecurs())) {
+					if (r.reservaSolapada(data, horaInici, horaFi, nomR)){
 						// activa excepcio [recursSalaSolapada]
 					}
 				}
@@ -129,8 +128,8 @@ public class CUCreaReservaAmbNotificacio {
 			// TODO activa excepcio [reservaCaducada]
 		}
 		ReservaAmbNotificacio r = FactoriaDades.getCtrlReserva().getByPK(nomR, d, hi);
-//		if (!r.getEsAmbNotificacio())
-			;// TODO activa excepcio [NoReservaAmbNotificacio]
+		// if (!r.getEsAmbNotificacio())
+		;// TODO activa excepcio [NoReservaAmbNotificacio]
 		List<Usuari> totsUsuaris = FactoriaDades.getCtrlUsuari().getAll();
 		List<Usuari> usus = r.getUsuarisEsNotifica();
 		if (usus.size() >= 10)

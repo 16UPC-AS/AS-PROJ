@@ -18,6 +18,6 @@
 		<mapping class="model.Ordinador" />
 		<mapping class="model.Projector" />
 		<mapping class="model.ReservaAmbNotificacio" />
-		<mapping class="model.ReservaSenseNotificacio" />
+		<mapping class="model.Reserva" />
 	</session-factory>
 </hibernate-configuration>

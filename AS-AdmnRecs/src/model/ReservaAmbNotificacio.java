@@ -1,19 +1,14 @@
 package model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 /**
@@ -22,31 +17,12 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name = "reservesambnotificacio")
+@DiscriminatorValue("1")
 @NamedQuery(name = "ReservaAmbNotificacio.findAll", query = "SELECT r FROM ReservaAmbNotificacio r")
-public class ReservaAmbNotificacio implements Serializable {
+public class ReservaAmbNotificacio extends Reserva {
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	private Long id;
-
 	private String comentari;
-
-	@Temporal(TemporalType.DATE)
-	private Date data;
-
-	private Integer horaFi;
-
-	private Integer horaInici;
-
-	// bi-directional many-to-one association to Recurs
-	@ManyToOne
-	@JoinColumn(name = "nrecurs")
-	private Recurs recurs;
-
-	// bi-directional many-to-one association to Usuari
-	@ManyToOne
-	@JoinColumn(name = "unusuari")
-	private Usuari usuari;
 
 	// bi-directional many-to-many association to Usuari
 	@ManyToMany(mappedBy = "reservesEsNotifica")
@@ -55,25 +31,8 @@ public class ReservaAmbNotificacio implements Serializable {
 	public ReservaAmbNotificacio() {
 	}
 
-	public ReservaAmbNotificacio(Recurs recurs, Usuari usuari, Date data, Integer horaInici, Integer horaFi,
-			String comentari) {
-		this.recurs = recurs;
-		this.usuari = usuari;
-		this.data = data;
-		this.horaInici = horaInici;
-		this.horaFi = horaFi;
-		this.comentari = comentari;
-		
-		
-		// TODO Auto-generated constructor stub
-	}
+	public ReservaAmbNotificacio(Recurs rec, Usuari u, Date data, Integer horaInici, Integer horaFi, String comentari) {
 
-	public Long getId() {
-		return this.id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getComentari() {
@@ -82,46 +41,6 @@ public class ReservaAmbNotificacio implements Serializable {
 
 	public void setComentari(String comentari) {
 		this.comentari = comentari;
-	}
-
-	public Date getData() {
-		return this.data;
-	}
-
-	public void setData(Date data) {
-		this.data = data;
-	}
-
-	public Integer getHoraFi() {
-		return this.horaFi;
-	}
-
-	public void setHoraFi(Integer horaFi) {
-		this.horaFi = horaFi;
-	}
-
-	public Integer getHoraInici() {
-		return this.horaInici;
-	}
-
-	public void setHoraInici(Integer horaInici) {
-		this.horaInici = horaInici;
-	}
-
-	public Recurs getRecurs() {
-		return this.recurs;
-	}
-
-	public void setRecurs(Recurs recurs) {
-		this.recurs = recurs;
-	}
-
-	public Usuari getUsuari() {
-		return this.usuari;
-	}
-
-	public void setUsuari(Usuari usuari) {
-		this.usuari = usuari;
 	}
 
 	public List<Usuari> getUsuarisEsNotifica() {
@@ -133,20 +52,6 @@ public class ReservaAmbNotificacio implements Serializable {
 	}
 
 	@Transient
-	public boolean periodeNoSolapat(Date d, Integer hi, Integer hf) {
-		return (!data.equals(d)) || (hi >= horaFi || hf <= horaInici);
-	}
-
-	public boolean recursEtsSala() {
-		recurs.etsSala();
-		return false;
-	}
-	
-	public String getNomRecurs(){
-		return recurs.getNom();
-	}
-	
-	@Transient
 	public ArrayList<String> getInfoPerServei() {
 		// TODO Auto-generated method stub
 		ArrayList<String> i = new ArrayList<String>();
@@ -154,7 +59,7 @@ public class ReservaAmbNotificacio implements Serializable {
 		for (Usuari u : usuarisEsNotifica)
 			mails.add(u.getMail());
 		String nr = getRecurs().getNom();
-		String nu = getUsuari().getUsername();
+		String nu = getUsuariAutor().getUsername();
 		i.add(nr);
 		i.add(getData().toString());
 		i.add(getHoraInici().toString());

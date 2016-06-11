@@ -13,7 +13,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -27,12 +26,6 @@ import javax.persistence.Transient;
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.INTEGER)
 @NamedQuery(name = "Recurs.findAll", query = "SELECT r FROM Recurs r")
 public class Recurs implements Serializable {
-	public Recurs(String nom, Integer type) {
-		super();
-		this.nom = nom;
-		this.type = type;
-	}
-
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -40,13 +33,15 @@ public class Recurs implements Serializable {
 
 	private Integer type;
 
-	// bi-directional many-to-one association to ReservaAmbNotificacio
-	@OneToMany(mappedBy = "recurs")
-	private List<ReservaAmbNotificacio> reservesAmbNotificacio;
+	public Recurs(String nom, Integer type) {
+		super();
+		this.nom = nom;
+		this.type = type;
+	}
 
-	// bi-directional many-to-one association to ReservaSenseNotificacio
+	// bi-directional many-to-one association to Reserva
 	@OneToMany(mappedBy = "recurs")
-	private List<ReservaSenseNotificacio> reservesSenseNotificacio;
+	private List<Reserva> reserves;
 
 	public Recurs() {
 	}
@@ -67,62 +62,35 @@ public class Recurs implements Serializable {
 		this.type = type;
 	}
 
-	public List<ReservaAmbNotificacio> getReservesAmbNotificacio() {
-		return this.reservesAmbNotificacio;
+	public List<Reserva> getReserves() {
+		return this.reserves;
 	}
 
-	public void setReservesAmbNotificacio(List<ReservaAmbNotificacio> reservesAmbNotificacio) {
-		this.reservesAmbNotificacio = reservesAmbNotificacio;
+	public void setReserves(List<Reserva> reserves) {
+		this.reserves = reserves;
 	}
 
-	public ReservaAmbNotificacio addReservesAmbNotificacio(ReservaAmbNotificacio reservesAmbNotificacio) {
-		getReservesAmbNotificacio().add(reservesAmbNotificacio);
-		reservesAmbNotificacio.setRecurs(this);
+	public Reserva addReserve(Reserva reserve) {
+		getReserves().add(reserve);
+		reserve.setRecurs(this);
 
-		return reservesAmbNotificacio;
+		return reserve;
 	}
 
-	public ReservaAmbNotificacio removeReservesAmbNotificacio(ReservaAmbNotificacio reservesAmbNotificacio) {
-		getReservesAmbNotificacio().remove(reservesAmbNotificacio);
-		reservesAmbNotificacio.setRecurs(null);
+	public Reserva removeReserve(Reserva reserve) {
+		getReserves().remove(reserve);
+		reserve.setRecurs(null);
 
-		return reservesAmbNotificacio;
-	}
-
-	public List<ReservaSenseNotificacio> getReservesSenseNotificacio() {
-		return this.reservesSenseNotificacio;
-	}
-
-	public void setReservesSenseNotificacio(List<ReservaSenseNotificacio> reservesSenseNotificacio) {
-		this.reservesSenseNotificacio = reservesSenseNotificacio;
-	}
-
-	public ReservaSenseNotificacio addReservesSenseNotificacio(ReservaSenseNotificacio reservesSenseNotificacio) {
-		getReservesSenseNotificacio().add(reservesSenseNotificacio);
-		reservesSenseNotificacio.setRecurs(this);
-
-		return reservesSenseNotificacio;
-	}
-
-	public ReservaSenseNotificacio removeReservesSenseNotificacio(ReservaSenseNotificacio reservesSenseNotificacio) {
-		getReservesSenseNotificacio().remove(reservesSenseNotificacio);
-		reservesSenseNotificacio.setRecurs(null);
-
-		return reservesSenseNotificacio;
+		return reserve;
 	}
 
 	@Transient
 	public ArrayList<String> estasDisp(Date d, Integer hi, Integer hf) {
 
-		for (ReservaAmbNotificacio r : reservesAmbNotificacio) {
-			if (!r.periodeNoSolapat(d, hi, hf))
+		for (Reserva r : reserves) {
+			if (!r.periodeSolapat(d, hi, hf))
 				return null;
 		}
-		for (ReservaSenseNotificacio r : reservesSenseNotificacio) {
-			if (!r.periodeNoSolapat(d, hi, hf))
-				return null;
-		}
-
 		return this.getInfo();
 
 	}
@@ -134,7 +102,7 @@ public class Recurs implements Serializable {
 
 	@Transient
 	public Boolean etsSala() {
-		return (getType().equals(0));
+		return false;
 	}
 
 }

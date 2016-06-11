@@ -1,17 +1,10 @@
 package model;
 
 import java.io.Serializable;
+import javax.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 /**
  * The persistent class for the usuaris database table.
@@ -30,19 +23,15 @@ public class Usuari implements Serializable {
 
 	private String nom;
 
-	// bi-directional many-to-one association to ReservaAmbNotificacio
-	@OneToMany(mappedBy = "usuari")
-	private List<ReservaAmbNotificacio> reservesAmbNotificacio;
-
-	// bi-directional many-to-one association to ReservaSenseNotificacio
-	@OneToMany(mappedBy = "usuari")
-	private List<ReservaSenseNotificacio> reservesSenseNotificacio;
-
 	// bi-directional many-to-many association to ReservaAmbNotificacio
 	@ManyToMany
 	@JoinTable(name = "esnotifica", joinColumns = { @JoinColumn(name = "usuari") }, inverseJoinColumns = {
 			@JoinColumn(name = "reserva") })
 	private List<ReservaAmbNotificacio> reservesEsNotifica;
+
+	// bi-directional many-to-one association to Reserva
+	@OneToMany(mappedBy = "usuariAutor")
+	private List<Reserva> reserves;
 
 	public Usuari() {
 	}
@@ -78,56 +67,34 @@ public class Usuari implements Serializable {
 		this.nom = nom;
 	}
 
-	public List<ReservaAmbNotificacio> getReservesAmbNotificacio() {
-		return this.reservesAmbNotificacio;
-	}
-
-	public void setReservesAmbNotificacio(List<ReservaAmbNotificacio> reservesAmbNotificacio) {
-		this.reservesAmbNotificacio = reservesAmbNotificacio;
-	}
-
-	public ReservaAmbNotificacio addReservesAmbNotificacio(ReservaAmbNotificacio reservesAmbNotificacio) {
-		getReservesAmbNotificacio().add(reservesAmbNotificacio);
-		reservesAmbNotificacio.setUsuari(this);
-
-		return reservesAmbNotificacio;
-	}
-
-	public ReservaAmbNotificacio removeReservesAmbNotificacio(ReservaAmbNotificacio reservesAmbNotificacio) {
-		getReservesAmbNotificacio().remove(reservesAmbNotificacio);
-		reservesAmbNotificacio.setUsuari(null);
-
-		return reservesAmbNotificacio;
-	}
-
-	public List<ReservaSenseNotificacio> getReservesSenseNotificacio() {
-		return this.reservesSenseNotificacio;
-	}
-
-	public void setReservesSenseNotificacio(List<ReservaSenseNotificacio> reservesSenseNotificacio) {
-		this.reservesSenseNotificacio = reservesSenseNotificacio;
-	}
-
-	public ReservaSenseNotificacio addReservesSenseNotificacio(ReservaSenseNotificacio reservesSenseNotificacio) {
-		getReservesSenseNotificacio().add(reservesSenseNotificacio);
-		reservesSenseNotificacio.setUsuari(this);
-
-		return reservesSenseNotificacio;
-	}
-
-	public ReservaSenseNotificacio removeReservesSenseNotificacio(ReservaSenseNotificacio reservesSenseNotificacio) {
-		getReservesSenseNotificacio().remove(reservesSenseNotificacio);
-		reservesSenseNotificacio.setUsuari(null);
-
-		return reservesSenseNotificacio;
-	}
-
 	public List<ReservaAmbNotificacio> getReservesEsNotifica() {
 		return this.reservesEsNotifica;
 	}
 
 	public void setReservesEsNotifica(List<ReservaAmbNotificacio> reservesEsNotifica) {
 		this.reservesEsNotifica = reservesEsNotifica;
+	}
+
+	public List<Reserva> getReserves() {
+		return this.reserves;
+	}
+
+	public void setReserves(List<Reserva> reserves) {
+		this.reserves = reserves;
+	}
+
+	public Reserva addReserve(Reserva reserva) {
+		getReserves().add(reserva);
+		reserva.setUsuariAutor(this);
+
+		return reserva;
+	}
+
+	public Reserva removeReserve(Reserva reserva) {
+		getReserves().remove(reserva);
+		reserva.setUsuariAutor(null);
+
+		return reserva;
 	}
 
 	public ArrayList<String> getInfo() {

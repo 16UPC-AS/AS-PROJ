@@ -22,8 +22,8 @@ public class test {
 		Projector proj = new Projector("pc1", "1920x1080");
 		BasicRepo.saveOrUpdate(proj);
 		Sala sala = new Sala("sala2", "bcn", 710);
-		sala.setOrdinadorBean(ord);
-		sala.setProjectorBean(proj);
+		sala.setOrdinador(ord);
+		sala.setProjector(proj);
 		BasicRepo.saveOrUpdate(sala);
 		// Projector proj2 = new Projector("proj2", sala, "1920x1080");
 		// BasicRepo.saveOrUpdate(proj2);

@@ -4,8 +4,8 @@
 		<class>model.Ordinador</class>
 		<class>model.Projector</class>
 		<class>model.Recurs</class>
+		<class>model.Reserva</class>
 		<class>model.ReservaAmbNotificacio</class>
-		<class>model.ReservaSenseNotificacio</class>
 		<class>model.Sala</class>
 		<class>model.Usuari</class>
 	</persistence-unit>
