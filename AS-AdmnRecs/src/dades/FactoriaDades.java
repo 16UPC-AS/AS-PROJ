@@ -13,6 +13,7 @@ public class FactoriaDades {
 	private static CtrlProjector ctrlProjector;
 	private static CtrlRecurs ctrlRecurs;
 	private static CtrlReservaAmbNot ctrlReserva;
+	private static CtrlReservaAmbNot ctrlReservaAmbNot;
 	private static CtrlSala ctrlSala;
 	private static CtrlUsuari ctrlUsuari;
 
