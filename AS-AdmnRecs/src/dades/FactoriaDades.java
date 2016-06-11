@@ -63,5 +63,11 @@ public class FactoriaDades {
 			ctrlUsuari = new CtrlUsuari();
 		return ctrlUsuari;
 	}
+	
+	public static CtrlReservaAmbNot getReservaAmbNot() {
+		if (ctrlReservaAmbNot == null)
+			ctrlReservaAmbNot = new CtrlReservaAmbNot();
+		return ctrlReservaAmbNot;
+	}
 
 }
