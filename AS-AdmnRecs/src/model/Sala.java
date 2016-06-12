@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -93,4 +95,26 @@ public class Sala extends Recurs {
 		return true;
 	}
 
+	@Transient
+	@Override
+	public ArrayList<String> getInfo() {
+		ArrayList<String> info = new ArrayList<String>();
+		info.add(getNom());
+		info.add(null);
+		info.add(null);
+		info.add(null);
+		info.add(aforament.toString());
+		info.add(ubicacio);
+		if (ordinador != null) {
+			info.add(ordinador.getMarca());
+			info.add(ordinador.getModel());
+		} else {
+			info.add(null);
+			info.add(null);
+		}
+		if (projector != null)
+			info.add(projector.getResolucio());
+		else			info.add(null);
+		return info;
+	}
 }

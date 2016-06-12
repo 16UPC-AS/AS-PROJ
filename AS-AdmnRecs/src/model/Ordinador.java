@@ -1,10 +1,14 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * The persistent class for the ordinadors database table.
@@ -25,10 +29,10 @@ public class Ordinador extends Recurs {
 	@OneToOne(mappedBy = "ordinador")
 	private Sala sala;
 
-	public Ordinador(){
+	public Ordinador() {
 		super();
 	}
-	
+
 	public Ordinador(String nom, String marca, String model) {
 		super(nom, 1);
 		this.marca = marca;
@@ -57,6 +61,34 @@ public class Ordinador extends Recurs {
 
 	public void setSala(Sala sala) {
 		this.sala = sala;
+	}
+
+	@Transient
+	@Override
+	public ArrayList<String> estasDisp(Date d, Integer hi, Integer hf) {
+		if (getSala() != null)
+			return null;
+		for (Reserva r : getReserves()) {
+			if ((r.periodeSolapat(d, hi, hf)))
+				return null;
+		}
+		return this.getInfo();
+	}
+
+	@Transient
+	@Override
+	public ArrayList<String> getInfo() {
+		ArrayList<String> info = new ArrayList<String>();
+		info.add(getNom());
+		info.add(marca);
+		info.add(model);
+		info.add(null);
+		info.add(null);
+		info.add(null);
+		info.add(null);
+		info.add(null);
+		info.add(null);
+		return info;
 	}
 
 }

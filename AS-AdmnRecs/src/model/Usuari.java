@@ -1,10 +1,18 @@
 package model;
 
 import java.io.Serializable;
-import javax.persistence.*;
-
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 /**
  * The persistent class for the usuaris database table.
@@ -24,10 +32,8 @@ public class Usuari implements Serializable {
 	private String nom;
 
 	// bi-directional many-to-many association to ReservaAmbNotificacio
-	@ManyToMany
-	@JoinTable(name = "esnotifica", joinColumns = { @JoinColumn(name = "usuari") }, inverseJoinColumns = {
-			@JoinColumn(name = "reserva") })
-	private List<ReservaAmbNotificacio> reservesEsNotifica;
+	@ManyToMany(mappedBy = "usuarisEsNotifica", cascade = { CascadeType.ALL })
+	private Set<ReservaAmbNotificacio> reservesEsNotifica = new HashSet<ReservaAmbNotificacio>(0);;
 
 	// bi-directional many-to-one association to Reserva
 	@OneToMany(mappedBy = "usuariAutor")
@@ -36,7 +42,7 @@ public class Usuari implements Serializable {
 	public Usuari() {
 	}
 
-	public Usuari(String username, String mail, String nom) {
+	public Usuari(String username, String nom, String mail) {
 		super();
 		this.username = username;
 		this.mail = mail;
@@ -67,11 +73,11 @@ public class Usuari implements Serializable {
 		this.nom = nom;
 	}
 
-	public List<ReservaAmbNotificacio> getReservesEsNotifica() {
+	public Set<ReservaAmbNotificacio> getReservesEsNotifica() {
 		return this.reservesEsNotifica;
 	}
 
-	public void setReservesEsNotifica(List<ReservaAmbNotificacio> reservesEsNotifica) {
+	public void setReservesEsNotifica(Set<ReservaAmbNotificacio> reservesEsNotifica) {
 		this.reservesEsNotifica = reservesEsNotifica;
 	}
 
@@ -83,14 +89,13 @@ public class Usuari implements Serializable {
 		this.reserves = reserves;
 	}
 
-	public Reserva addReserve(Reserva reserva) {
+	public Reserva addReserva(Reserva reserva) {
 		getReserves().add(reserva);
 		reserva.setUsuariAutor(this);
-
 		return reserva;
 	}
 
-	public Reserva removeReserve(Reserva reserva) {
+	public Reserva removeReserva(Reserva reserva) {
 		getReserves().remove(reserva);
 		reserva.setUsuariAutor(null);
 
@@ -98,13 +103,23 @@ public class Usuari implements Serializable {
 	}
 
 	public ArrayList<String> getInfo() {
-
 		ArrayList<String> info = new ArrayList<String>();
 		info.add(getUsername());
 		info.add(getNom());
 		info.add(getMail());
 
 		return info;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Usuari))
+			return false;
+		Usuari u = (Usuari) o;
+		if (u.getUsername().equals(username))
+			return true;
+		return false;
+
 	}
 
 }

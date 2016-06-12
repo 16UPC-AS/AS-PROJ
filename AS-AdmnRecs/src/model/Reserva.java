@@ -7,12 +7,15 @@ import java.util.Date;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -31,6 +34,8 @@ public class Reserva implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "user_seq_gen")
+	@SequenceGenerator(name = "user_seq_gen", sequenceName = "reserves_id_sec")
 	private Long id;
 
 	private Boolean ambnotificacio;
@@ -55,6 +60,18 @@ public class Reserva implements Serializable {
 	private Usuari usuariAutor;
 
 	public Reserva() {
+	}
+
+	public Reserva(Recurs recurs, Usuari usuari, Date data, Integer horaInici, Integer horaFi, String comentari,
+			boolean ambnotificacio) {
+		super();
+		this.recurs = recurs;
+		this.usuariAutor = usuari;
+		this.data = data;
+		this.horaInici = horaInici;
+		this.horaFi = horaFi;
+		this.ambnotificacio = ambnotificacio;
+		this.comentari = comentari;
 	}
 
 	public Long getId() {
@@ -122,7 +139,13 @@ public class Reserva implements Serializable {
 	}
 
 	public boolean periodeSolapat(Date d, Integer hi, Integer hf) {
-		return (!(!data.equals(d)) || (hi >= horaFi || hf <= horaInici));
+		if (d.getDate() != data.getDate())
+			return false;
+		if (d.getMonth() != data.getMonth())
+			return false;
+		if (d.getYear() != data.getYear())
+			return false;
+		return (!(hi >= horaFi || hf <= horaInici));
 	}
 
 	public boolean recursEsSala() {
@@ -130,13 +153,13 @@ public class Reserva implements Serializable {
 	}
 
 	public boolean reservaSolapada(Date d, Integer hi, Integer hf, String nomR) {
-		return (periodeSolapat(d, hi, hf) && recursEsSala() && nomR.equals(getRecurs().getNom()));
+		return (periodeSolapat(d, hi, hf) && recursEsSala());
 	}
 
 	@Transient
 	public ArrayList<String> getInfoPerServei() {
-		
+
 		// TODO Activa reservanoNotificada
-				return null;
+		return null;
 	}
 }

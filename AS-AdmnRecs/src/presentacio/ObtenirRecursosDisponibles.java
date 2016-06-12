@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.DefaultComboBoxModel;
@@ -17,9 +16,8 @@ import javax.swing.JTextArea;
 
 import com.toedter.calendar.JCalendar;
 
-import Excepcions.ExcNoHiHaRecursosDisponibles;
-import Excepcions.ExcPeriodeErroni;
-import casosDus.CUConsultaRecurs;
+import excepcions.ExcNoHiHaRecursos;
+import excepcions.ExcPeriodeErroni;
 
 public class ObtenirRecursosDisponibles {
 
@@ -35,7 +33,7 @@ public class ObtenirRecursosDisponibles {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
+	public static void launch() {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -68,6 +66,7 @@ public class ObtenirRecursosDisponibles {
 		frmAltaReservaAmb.getContentPane().setLayout(null);
 
 		final JTextArea textArea = new JTextArea();
+		textArea.setForeground(Color.ORANGE);
 		textArea.setEditable(false);
 		textArea.setRows(6);
 		textArea.setBackground(Color.GRAY);
@@ -135,30 +134,15 @@ public class ObtenirRecursosDisponibles {
 					if (hi > hf)
 						throw new ExcPeriodeErroni();
 
-					CUConsultaRecurs cucr = new CUConsultaRecurs();
-					// ArrayList<ArrayList<String>> recursos =
-					// cucr.obteRecursosDisponiblesPerData(d, hi, hf);
-					ArrayList<String> exemple_recursos = new ArrayList(); // S'HA
-																			// D'UTILITZAR
-																			// LA
-																			// FUNCIO
-																			// D'ADALT
-					// I FER SERVIR ARRAY<ARRAY<STRING>>
-					exemple_recursos.add("ASUS X556UA");
-					exemple_recursos.add("ASUS F554L");
-					exemple_recursos.add("Sala1");
-					exemple_recursos.add("EPSON EH-TW5210");
-					if (exemple_recursos.size() == 0) throw new ExcNoHiHaRecursosDisponibles();
-					DadesReserva ar = new DadesReserva(exemple_recursos);
-					ar.NewScreen(exemple_recursos);
+					AltaReservaAmbNotificacioControlador.getInstance().prOkObteRecursosDisponibles(d, hi, hf);
 					frmAltaReservaAmb.setVisible(false);
 
 				} catch (ExcPeriodeErroni e) {
-					textArea.setText("El periode és erroni");
-				} catch (ExcNoHiHaRecursosDisponibles e){
+					textArea.setText("El període és erroni");
+				} catch (ExcNoHiHaRecursos e) {
 					textArea.setText("No hi ha recursos disponibles per ser reservats a la data i \nperíode indicats");
 				} catch (Exception e) {
-					
+
 				}
 
 			}

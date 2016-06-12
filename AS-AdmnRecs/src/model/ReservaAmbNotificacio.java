@@ -1,11 +1,16 @@
 package model;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -22,51 +27,41 @@ import javax.persistence.Transient;
 public class ReservaAmbNotificacio extends Reserva {
 	private static final long serialVersionUID = 1L;
 
-	private String comentari;
-
 	// bi-directional many-to-many association to Usuari
-	@ManyToMany(mappedBy = "reservesEsNotifica")
-	private List<Usuari> usuarisEsNotifica;
+	// bi-directional many-to-many association to ReservaAmbNotificacio
+	@ManyToMany(cascade = { CascadeType.ALL })
+	@JoinTable(name = "esnotifica", joinColumns = { @JoinColumn(name = "reserva") }, inverseJoinColumns = {
+			@JoinColumn(name = "usuari") })
+	private Set<Usuari> usuarisEsNotifica = new HashSet<Usuari>();
 
 	public ReservaAmbNotificacio() {
 	}
 
 	public ReservaAmbNotificacio(Recurs rec, Usuari u, Date data, Integer horaInici, Integer horaFi, String comentari) {
-
+		super(rec, u, data, horaInici, horaFi, comentari, true);
+		this.usuarisEsNotifica.add(u);
 	}
 
-	public String getComentari() {
-		return this.comentari;
-	}
-
-	public void setComentari(String comentari) {
-		this.comentari = comentari;
-	}
-
-	public List<Usuari> getUsuarisEsNotifica() {
+	public Set<Usuari> getUsuarisEsNotifica() {
 		return this.usuarisEsNotifica;
 	}
 
-	public void setUsuarisEsNotifica(List<Usuari> usuarisEsNotifica) {
+	public void setUsuarisEsNotifica(Set<Usuari> usuarisEsNotifica) {
 		this.usuarisEsNotifica = usuarisEsNotifica;
 	}
 
 	@Transient
 	public ArrayList<String> getInfoPerServei() {
-		// TODO Auto-generated method stub
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		ArrayList<String> i = new ArrayList<String>();
-		ArrayList<String> mails = new ArrayList<String>();
-		for (Usuari u : usuarisEsNotifica)
-			mails.add(u.getMail());
 		String nr = getRecurs().getNom();
 		String nu = getUsuariAutor().getUsername();
 		i.add(nr);
-		i.add(getData().toString());
+		i.add(sdf.format(getData()));
 		i.add(getHoraInici().toString());
 		i.add(getHoraFi().toString());
 		i.add(nu);
 		i.add(getComentari());
-		i.addAll(mails);
 		return i;
 	}
 

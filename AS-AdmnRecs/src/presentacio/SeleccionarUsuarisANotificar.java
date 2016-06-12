@@ -6,7 +6,8 @@ import java.awt.HeadlessException;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -16,19 +17,25 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import excepcions.ExcReservaATope;
+import excepcions.ExcServeiNoDisponible;
+import excepcions.ExcUsuariNoExisteix;
+
 public class SeleccionarUsuarisANotificar {
 
 	private JFrame frame;
 	static JScrollPane scrollPane;
 	static CheckBoxList cbList;
 	static JTextArea textArea;
+	Map<String, String> usernames;
+	ArrayList<String> nomUsers;
 
 	/**
 	 * Launch the application.
 	 * 
 	 * @param usuaris
 	 */
-	public static void NewScreen(final ArrayList<String> usuaris) {
+	public static void NewScreen(final ArrayList<ArrayList<String>> usuaris) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -47,7 +54,7 @@ public class SeleccionarUsuarisANotificar {
 	 * 
 	 * @param usuaris
 	 */
-	public SeleccionarUsuarisANotificar(ArrayList<String> usuaris) {
+	public SeleccionarUsuarisANotificar(ArrayList<ArrayList<String>> usuaris) {
 		initialize(usuaris);
 	}
 
@@ -56,7 +63,7 @@ public class SeleccionarUsuarisANotificar {
 	 * 
 	 * @param usuaris
 	 */
-	private void initialize(ArrayList<String> usuaris) {
+	private void initialize(ArrayList<ArrayList<String>> usuaris) {
 		frame = new JFrame("Alta reserva amb notificacio");
 		frame.setResizable(false);
 		frame.setBounds(100, 100, 405, 336);
@@ -67,6 +74,12 @@ public class SeleccionarUsuarisANotificar {
 		lblSeleccionaElsUsuaris.setBounds(38, 17, 285, 14);
 		frame.getContentPane().add(lblSeleccionaElsUsuaris);
 
+		usernames = new HashMap<String, String>();
+		nomUsers = new ArrayList<String>();
+		for (ArrayList<String> r : usuaris) {
+			usernames.put(r.get(1), r.get(0));
+			nomUsers.add(r.get(1));
+		}
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.addMouseListener(new MouseAdapter() {
 			@Override
@@ -88,6 +101,7 @@ public class SeleccionarUsuarisANotificar {
 		frame.getContentPane().add(btnOk);
 
 		textArea = new JTextArea();
+		textArea.setForeground(Color.ORANGE);
 		textArea.setRows(6);
 		textArea.setEditable(false);
 		textArea.setBackground(Color.GRAY);
@@ -97,15 +111,15 @@ public class SeleccionarUsuarisANotificar {
 		scrollPane = new JScrollPane();
 		scrollPane.setBounds(48, 42, 275, 141);
 		frame.getContentPane().add(scrollPane);
-		cbList = new CheckBoxList();
+		cbList = new CheckBoxList(usuaris.size());
 		JCheckBox[] myList = new JCheckBox[usuaris.size()];
-		for (int i = 0; i < usuaris.size(); ++i) {
-			JCheckBox check = new JCheckBox(usuaris.get(i));
+
+		for (int i = 0; i < nomUsers.size(); ++i) {
+			JCheckBox check = new JCheckBox(nomUsers.get(i));
 			myList[i] = check;
 		}
 		cbList.setListData(myList);
 
-		
 		scrollPane.setViewportView(cbList);
 		btnOk.addMouseListener(new MouseAdapter() {
 			@Override
@@ -114,19 +128,27 @@ public class SeleccionarUsuarisANotificar {
 				try {
 					// JOptionPane.showMessageDialog(frame, "La reserva s'ha
 					// creat correctament");
-					List<String> usus = (List<String>) cbList.getSelectedValuesList();
+					ArrayList<Boolean> usus = cbList.getSeleccionats();
 					StringBuffer sb = new StringBuffer("");
-					for (String nomUser : usus) {
-						sb.append(nomUser);
+					ArrayList<String> usernamesAAssignar = new ArrayList<String>();
+					int index = 0;
+					for (Boolean nomUser : usus) {
+						if (nomUser) {
+							sb.append(usernames.get(nomUsers.get(index)));
+							usernamesAAssignar.add(usernames.get(nomUsers.get(index)));
+						}
+						++index;
 					}
 
-					textArea.setText(sb.toString());
+					AltaReservaAmbNotificacioControlador.getInstance().prOKAssignaUsuarisAReserva(usernamesAAssignar);
+					frame.setVisible(false);
 					// System.exit(0);
-				} catch (HeadlessException e1) {
-					// TODO Auto-generated catch block
-					// reservaATope
-					// serveiNoDisponible
-					e1.printStackTrace();
+				} catch (ExcReservaATope e1) {
+					textArea.setText("No es poden assignar més de 10 usuaris per a ser notificats");
+				} catch (ExcServeiNoDisponible e1) {
+					textArea.setText("El servei no està disponible");
+				} catch (ExcUsuariNoExisteix e1) {
+					textArea.setText("El servei no està disponible");
 				}
 			}
 		});

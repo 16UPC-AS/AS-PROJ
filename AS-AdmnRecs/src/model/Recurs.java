@@ -70,33 +70,32 @@ public class Recurs implements Serializable {
 		this.reserves = reserves;
 	}
 
-	public Reserva addReserve(Reserva reserve) {
-		getReserves().add(reserve);
-		reserve.setRecurs(this);
+	public Reserva addReserve(Reserva reserva) {
+		getReserves().add(reserva);
+		reserva.setRecurs(this);
 
-		return reserve;
+		return reserva;
 	}
 
-	public Reserva removeReserve(Reserva reserve) {
-		getReserves().remove(reserve);
-		reserve.setRecurs(null);
+	public Reserva removeReserve(Reserva reserva) {
+		getReserves().remove(reserva);
+		reserva.setRecurs(null);
 
-		return reserve;
+		return reserva;
 	}
 
 	@Transient
 	public ArrayList<String> estasDisp(Date d, Integer hi, Integer hf) {
-
-		for (Reserva r : reserves) {
-			if (!r.periodeSolapat(d, hi, hf))
+		for (Reserva r : getReserves()) {
+			if ((r.periodeSolapat(d, hi, hf)))
 				return null;
 		}
 		return this.getInfo();
-
 	}
 
-	private ArrayList<String> getInfo() {
-		// TODO Auto-generated method stub
+	@Transient
+	public ArrayList<String> getInfo() {
+		// ArrayList<String>
 		return null;
 	}
 
